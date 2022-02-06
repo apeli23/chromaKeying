@@ -1,6 +1,6 @@
 import React, {useEffect } from 'react';
 
-export default function Processor() {
+export default function Template() {
     let video, canvas, outputContext, temporaryCanvas, temporaryContext;
 
     function computeFrame() {
