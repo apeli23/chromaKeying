@@ -1,8 +1,10 @@
-import Processor from '../components/Processor'
+import Processor from '../components/Processor';
+import Template from '../components/Template';
 export default function Home() {
   return (
     <div>
-      <Processor />
+      <Template />
+      {/* <Processor /> */}
     </div>
   )
 }
