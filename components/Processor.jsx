@@ -32,21 +32,18 @@ export default function Processor() {
         }
         outputContext.putImageData(frame, 0, 0)
         setTimeout(computeFrame, 0);
-        setComputed(true);
+
+
+        const chunks = []; 
+        const cnv = canvasRef.current;
+        const stream = cnv.captureStream();  
+        const rec = new MediaRecorder(stream); 
+        rec.ondataavailable = e => chunks.push(e.data);
+        rec.onstop = e => uploadHandler(new Blob(chunks, { type: 'video/webm' }));
+        rec.start();
+        setTimeout(() => rec.stop(), 16000);  
     }
 
-    function uploadHandler() {
-        const chunks = []; // here we will store our recorded media chunks (Blobs)
-        const cnv = canvasRef.current;
-        const stream = cnv.captureStream(); // grab our canvas MediaStream
-        const rec = new MediaRecorder(stream); // init the recorder
-        // every time the recorder has new data, we will store it in our array
-        rec.ondataavailable = e => chunks.push(e.data);
-        // only when the recorder stops, we construct a complete Blob from all the chunks
-        rec.onstop = e => exportVid(new Blob(chunks, { type: 'video/webm' }));
-        rec.start();
-        setTimeout(() => rec.stop(), 16000); // stop recording in 3s
-    }
 
     function readFile(file) {
         return new Promise(function (resolve, reject) {
@@ -64,7 +61,7 @@ export default function Processor() {
         });
     }
 
-    async function exportVid(blob) {
+    async function uploadHandler(blob) {
         await readFile(blob).then((encoded_file) => {
             try {
                 fetch('/api/cloudinary', {
@@ -74,6 +71,7 @@ export default function Processor() {
                 })
                     .then((response) => response.json())
                     .then((data) => {
+                        setComputed(true);
                         setLink(data.data);
                     });
             } catch (error) {
@@ -81,9 +79,9 @@ export default function Processor() {
             }
         });
     }
-
     return (
         <>
+         <>
             <header className="header">
                 <div className="text-box">
                     <h1 className="heading-primary">
@@ -97,12 +95,11 @@ export default function Processor() {
                     <video className="video" crossOrigin="Anonymous" src='https://res.cloudinary.com/dogjmmett/video/upload/v1632221403/sample_mngu99.mp4' id='video' width='400' height='360' controls autoPlay muted loop type="video/mp4" />
                 </div>
                 <div className="column">
-                    <a href={link}>LINK : {link}</a>
+                    { link ? <a href={link}>LINK : {link}</a> : <h3>your link will show here...</h3>}
                     <canvas className="canvas" ref={canvasRef} id="output-canvas" width="500" height="360" ></canvas><br />
-                    <button onClick={uploadHandler}>ghjyu</button>
-                    {computed && <a href="#" className="btn btn-white btn-animated" onClick={uploadHandler}>GET VIDEO LINK</a>}
                 </div>
             </div>
+        </>
         </>
     )
 }
