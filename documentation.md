@@ -30,6 +30,7 @@ Head to the directory
 You can use `npm run dev` to run nextjs server localy. 
 Delete all the contents in the `pages/index` directory and replace them with the following 
 ```
+"pages/index"
 import Processor from '../components/Processor';
 export default function Home() {
   return (
@@ -42,6 +43,9 @@ export default function Home() {
 
 In the code above, our root component contains a function named Home which imports a component named Processor, imported from the directory `components/Processor`. You will build this directory by creating a folder named `components` and inside it create a new file named `Processor.jsx`.  in the `Processor.jsx` file start by creating a functional component like shown below
 ```
+"components/Processor.jsx"
+
+
 export default function Processor() {
   return (
     <div>
@@ -61,6 +65,9 @@ This should be enough to run the browser with the page looking as shown:
  The three environment variables will be the  `Cloud name` , `API Key` and `API Secret`. 
  To use them, head back to your project root directory and create a file named `.env`. Inside it paste the following code 
  ```
+ ".env"
+
+
 CLOUDINARY_NAME = 
 
 CLOUDINARY_API_KEY = 
@@ -75,6 +82,9 @@ CLOUDINARY_API_SECRET=
   Start by pasting the following code 
 
 ```
+"pages/api/cloudinary"
+
+
   var cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -85,6 +95,9 @@ cloudinary.config({
 ```
 The above code simply configures the cloudinary envs to our component. Below it paste the following function
 ```
+"pages/api/cloudinary"
+
+
 export default async function handler(req, res) {
     let uploaded_url = '';
     const fileStr = req.body.data;
@@ -120,11 +133,16 @@ The above is a nextjs handler function that will receive a request body from the
  Inside the `components/Processor.jsx` directory, start by pasting the necessary imports at the top of the page. We will only need one
 
  ```
+ "pages/components/Processor.jsx"
+
  import { useState, useRef } from 'react';
 ```
 
 Inside the `Processor` function, paste the following
 ```
+ "pages/components/Processor.jsx"
+
+
   let video, canvas, outputContext, temporaryCanvas, temporaryContext;
   const canvasRef = useRef();
   const [computed, setComputed] = useState(false);
@@ -135,6 +153,9 @@ Each of the above variables will be understood as we move on.
 Replace your function's return statement with the following code, 
 
 ```
+ "pages/components/Processor.jsx"
+
+
 <>
             <header className="header">
                 <div className="text-box">
@@ -162,6 +183,9 @@ The above code should simply create a UI that users will be interracting with. T
 If the page has not shown up, dont worry, that's because the `REMOVE BACKGROUND` button contains an onClick function named `computeFrame`. Let's create it. Above the return statement, paste the following
 
 ```
+ "pages/components/Processor.jsx"
+
+
 function computeFrame(){
 
 }
@@ -170,6 +194,9 @@ Your UI should work by now.
 
 Let us modify our `computeFrame` function. When this function is fired, the function should remove the green color from the video and maintain the foreground. Therefore start by pasting the following inside it
 ```
+ "pages/components/Processor.jsx"
+
+
         video = document.getElementById("video")
 
         temporaryCanvas = document.createElement("canvas");
@@ -185,6 +212,8 @@ Above, we begin using the variables created earlier. the `video` variable reffer
 The `temporaryContext` variable will be used to fetch the current video frame as image and pass the video size and element using the drawImage method.
 
 ```
+ "pages/components/Processor.jsx"
+
 
         temporaryContext.drawImage(video, 0, 0, video.width, video.height);
         let frame = temporaryContext.getImageData(0, 0, video.width, video.height);
@@ -194,6 +223,9 @@ We can now remove the green screen background. Our sample image data is in singl
 We will create a loop that checks all pixels' RGB value  and get the value for each pixel by multiplyimg index by four and adding an offset. R, the first value for each pixel will get zero offset while G and B will get 1 and 2 offset respectively.
 
 ```
+ "pages/components/Processor.jsx"
+
+
 for (let i = 0; i < frame.data.length / 4; i++) {
             let r = frame.data[i * 4 + 0];
             let g = frame.data[i * 4 + 1];
@@ -203,6 +235,9 @@ for (let i = 0; i < frame.data.length / 4; i++) {
 ```
 At this point, we can confirm each pixel's RGB value that resembles the green color and set their alpha value to zero which will remove the green screen. This will modify our the code above as follows
 ```
+ "pages/components/Processor.jsx"
+
+
  for (let i = 0; i < frame.data.length / 4; i++) {
             let r = frame.data[i * 4 + 0];
             let g = frame.data[i * 4 + 1];
@@ -215,6 +250,9 @@ At this point, we can confirm each pixel's RGB value that resembles the green co
 ```
 Better results can be achieved through a more advanced algorithm but for our case, this should be enough. Use the setTimeout to recursively call itself and create a rendering loop. 
 ```
+ "pages/components/Processor.jsx"
+
+
 outputContext.putImageData(frame, 0, 0)
         setTimeout(computeFrame, 0);
       ```
@@ -226,37 +264,58 @@ Next, we record our animated canvas as a webm file using  MediaRecorder API for 
 
 Create a contsant to upload recorded media chunks
 ```
+ "pages/components/Processor.jsx"
+
+
 const chunks = [];
 ```
 Create another to refference our canvas element using useRef hook
 
 ```
+ "pages/components/Processor.jsx"
+
+
    const cnv = canvasRef.current;
 ```
 Grab the canvas MediaStream
 ```
+ "pages/components/Processor.jsx"
+
+
 const stream = cnv.captureStream()
 ```
 Initialize the recorder, and let it store data in our array each time the recorder has new data
 ```
+ "pages/components/Processor.jsx"
+
+
 const rec = new MediaRecorder(stream); 
         rec.ondataavailable = e => chunks.push(e.data);
  ```
 A complete blob will be constructed when the recorder stops
 
 ```
+ "pages/components/Processor.jsx"
+
+
 rec.onstop = e => uploadHandler(new Blob(chunks, { type: 'video/webm' }));
         rec.start();
 ```
 
 you can also set the time the media stops recording. We shal stop our in 16 seconds
 ```
+ "pages/components/Processor.jsx"
+
+
 setTimeout(() => rec.stop(), 16000);
 ```
 
 In the above codes  notice the `uploadHandler` function. If we run this project now, there will be an error `uploadHandler is ot defined` . We solve this by creating the function itself.
 
 ```
+ "pages/components/Processor.jsx"
+
+
 async function uploadHandler(){
 
 }
@@ -264,6 +323,9 @@ async function uploadHandler(){
 The function above will be used to send our webm files to the backend for upload.
 Replace with its full code below
 ```
+ "pages/components/Processor.jsx"
+
+
 async function uploadHandler(blob) {
         await readFile(blob).then((encoded_file) => {
             try {
@@ -286,6 +348,9 @@ async function uploadHandler(blob) {
 The function is an async function since it will involve an await expression to make promise returning function to act syncronous by suspending execution untill the promise is fullfiled.The resolved value will be the await expression's return value. Use the following [link](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) for better understanding of asyncronous functions. In our case, the await expression will use the blob prop from the `computeFrame` function. it will return a base64 encoded file awaited from a fileReader function. Paste the following to include your fileReader
 
 ```
+ "pages/components/Processor.jsx"
+
+ 
 function readFile(file) {
         return new Promise(function (resolve, reject) {
             let fr = new FileReader();

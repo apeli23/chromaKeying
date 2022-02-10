@@ -26,7 +26,7 @@ export default function Processor() {
             let g = frame.data[i * 4 + 1];
             let b = frame.data[i * 4 + 2];
 
-            if (r > 70 && r < 160 && g > 95 && g < 220 && b > 25 && b < 150) {
+            if (r > 6 && r < 23 && g > 42 && g < 168 && b > 3 && b < 25) {
                 frame.data[i * 4 + 3] = 0;
             }
         }
@@ -62,22 +62,22 @@ export default function Processor() {
     }
 
     async function uploadHandler(blob) {
-        await readFile(blob).then((encoded_file) => {
-            try {
-                fetch('/api/cloudinary', {
-                    method: 'POST',
-                    body: JSON.stringify({ data: encoded_file }),
-                    headers: { 'Content-Type': 'application/json' },
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        setComputed(true);
-                        setLink(data.data);
-                    });
-            } catch (error) {
-                console.error(error);
-            }
-        });
+        // await readFile(blob).then((encoded_file) => {
+        //     try {
+        //         fetch('/api/cloudinary', {
+        //             method: 'POST',
+        //             body: JSON.stringify({ data: encoded_file }),
+        //             headers: { 'Content-Type': 'application/json' },
+        //         })
+        //             .then((response) => response.json())
+        //             .then((data) => {
+        //                 setComputed(true);
+        //                 setLink(data.data);
+        //             });
+        //     } catch (error) {
+        //         console.error(error);
+        //     }
+        // });
     }
     return (
         <>
@@ -92,7 +92,7 @@ export default function Processor() {
             </header>
             <div className="row">
                 <div className="column">
-                    <video className="video" crossOrigin="Anonymous" src='https://res.cloudinary.com/dogjmmett/video/upload/v1632221403/sample_mngu99.mp4' id='video' width='400' height='360' controls autoPlay muted loop type="video/mp4" />
+                    <video className="video" crossOrigin="Anonymous" src='https://res.cloudinary.com/dogjmmett/video/upload/v1644477275/production_ID_4136984_y1tflu.mp4' id='video' width='400' height='360' controls autoPlay muted loop type="video/mp4" />
                 </div>
                 <div className="column">
                     { link ? <a href={link}>LINK : {link}</a> : <h3>your link will show here...</h3>}
