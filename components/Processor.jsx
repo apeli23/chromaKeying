@@ -26,7 +26,7 @@ export default function Processor() {
             let g = frame.data[i * 4 + 1];
             let b = frame.data[i * 4 + 2];
 
-            if (r > 4 && r < 40 && g > 35 && g < 175 && b > 3 && b < 35) {
+            if (r > 6 && r < 40 && g > 42 && g < 177 && b > 3 && b < 100) {
                 frame.data[i * 4 + 3] = 0;
             }
         }
