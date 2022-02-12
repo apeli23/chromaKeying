@@ -6,34 +6,38 @@ export default function Processor() {
     const canvasRef = useRef();
     const [computed, setComputed] = useState(false);
     const [link, setLink] = useState('');
+    function init() {
+        video = document.getElementById('video');
 
-    useEffect(() => {
-        video = document.getElementById("video")
 
         video2 = document.createElement('video');
-        video2.src = "images/background.mp4"
+        video2.src = "fire.mp4"
         video2.muted = true;
         video2.autoplay = true;
 
         canvas = document.getElementById('output-canvas');
         outputContext = canvas.getContext('2d');
-        console.log(canvas)
 
-        temporaryCanvas = document.createElement("canvas");
-        temporaryCanvas.setAttribute("width", 800);
-        temporaryCanvas.setAttribute("height", 450);
-        temporaryContext = temporaryCanvas.getContext("2d");
+        temporaryCanvas = document.createElement('canvas');
+        temporaryCanvas.setAttribute('width', 800);
+        temporaryCanvas.setAttribute('height', 450);
+        temporaryContext = temporaryCanvas.getContext('2d');
 
-        video.addEventListener('play', computeFrame);
-    }, [])
+        video.addEventListener('play', computeFrame );
+      }
+    
+
     function computeFrame() {
+        
         if (video.paused || video.ended) {
             return;
         }
-
+        
+        console.log("video2")
         temporaryContext.drawImage(video, 0, 0, video.width, video.height);
         let frame = temporaryContext.getImageData(0, 0, video.width, video.height);
 
+       
         temporaryContext.drawImage(video2, 0, 0, video2.videoWidth, video2.videoHeight);
         let frame2 = temporaryContext.getImageData(0, 0, video2.videoWidth, video2.videoHeight);
 
@@ -97,24 +101,27 @@ export default function Processor() {
         //     }
         });
     }
+    useEffect(() => {
+        init();
+    }, [])
     return (
         <>
             <>
                 <header className="header">
                     <div className="text-box">
                         <h1 className="heading-primary">
-                            <span className="heading-primary-main">Cloudinary Chroma Keying</span>
+                            <span onClick={computeFrame} className="heading-primary-main">Cloudinary Chroma Keying</span>
                         </h1>
                         <a href="#" className="btn btn-white btn-animated" onClick={computeFrame}>Remove Background</a>
                     </div>
                 </header>
                 <div className="row">
                     <div className="column">
-                        <video className="video" crossOrigin="Anonymous" src='images/foreground.mp4' id='video' width='400' height='360' controls autoPlay muted loop type="video/mp4" />
+                        <video className="video" crossOrigin="Anonymous" src='images/foreground.mp4' id='video' width='800' height='450' controls autoPlay muted loop type="video/mp4" />
                     </div>
                     <div className="column">
                         {link ? <a href={link}>LINK : {link}</a> : <h3>your link will show here...</h3>}
-                        <canvas className="canvas" ref={canvasRef} id="output-canvas" width="500" height="360" ></canvas><br />
+                        <canvas className="canvas" ref={canvasRef} id="output-canvas" width="800" height="450" ></canvas><br />
                     </div>
                 </div>
             </>
