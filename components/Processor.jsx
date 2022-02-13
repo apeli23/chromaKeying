@@ -6,12 +6,14 @@ export default function Processor() {
     const canvasRef = useRef();
     const [computed, setComputed] = useState(false);
     const [link, setLink] = useState('');
-    function init() {
+
+    useEffect(() => {
         video = document.getElementById('video');
 
-
         video2 = document.createElement('video');
-        video2.src = "fire.mp4"
+        video2.setAttribute("width", 800);
+        video2.setAttribute("height", 450);
+        video2.src = "images/background.mp4"
         video2.muted = true;
         video2.autoplay = true;
 
@@ -23,23 +25,20 @@ export default function Processor() {
         temporaryCanvas.setAttribute('height', 450);
         temporaryContext = temporaryCanvas.getContext('2d');
 
-        video.addEventListener('play', computeFrame );
-      }
-    
-
+    }, []);
     function computeFrame() {
-        
+
         if (video.paused || video.ended) {
             return;
         }
-        
-        console.log("video2")
+
+
         temporaryContext.drawImage(video, 0, 0, video.width, video.height);
         let frame = temporaryContext.getImageData(0, 0, video.width, video.height);
 
-       
-        temporaryContext.drawImage(video2, 0, 0, video2.videoWidth, video2.videoHeight);
-        let frame2 = temporaryContext.getImageData(0, 0, video2.videoWidth, video2.videoHeight);
+
+        temporaryContext.drawImage(video2, 0, 0, video2.width, video2.height);
+        let frame2 = temporaryContext.getImageData(0, 0, video2.width, video2.height);
 
         for (let i = 0; i < frame.data.length / 4; i++) {
             let r = frame.data[i * 4 + 0];
@@ -85,25 +84,23 @@ export default function Processor() {
 
     async function uploadHandler(blob) {
         await readFile(blob).then((encoded_file) => {
-        //     try {
-        //         fetch('/api/cloudinary', {
-        //             method: 'POST',
-        //             body: JSON.stringify({ data: encoded_file }),
-        //             headers: { 'Content-Type': 'application/json' },
-        //         })
-        //             .then((response) => response.json())
-        //             .then((data) => {
-        //                 setComputed(true);
-        //                 setLink(data.data);
-        //             });
-        //     } catch (error) {
-        //         console.error(error);
-        //     }
+            //     try {
+            //         fetch('/api/cloudinary', {
+            //             method: 'POST',
+            //             body: JSON.stringify({ data: encoded_file }),
+            //             headers: { 'Content-Type': 'application/json' },
+            //         })
+            //             .then((response) => response.json())
+            //             .then((data) => {
+            //                 setComputed(true);
+            //                 setLink(data.data);
+            //             });
+            //     } catch (error) {
+            //         console.error(error);
+            //     }
         });
     }
-    useEffect(() => {
-        init();
-    }, [])
+
     return (
         <>
             <>
