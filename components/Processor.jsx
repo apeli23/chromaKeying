@@ -4,6 +4,7 @@ import { Canvas2Video } from "canvas2video";
 export default function Processor() {
     let video, canvas, outputContext, temporaryCanvas, temporaryContext, video2;
     const canvasRef = useRef();
+    const videoRef = useRef(undefined);
     const [computed, setComputed] = useState(false);
     const [link, setLink] = useState('');
 
@@ -13,9 +14,11 @@ export default function Processor() {
         video2 = document.createElement('video');
         video2.setAttribute("width", 800);
         video2.setAttribute("height", 450);
-        video2.src = "images/background.mp4"
+        video2.src = "videos/background.mp4";
+        video2.setAttribute("ref", videoRef.current);
         video2.muted = true;
         video2.autoplay = true;
+        video2.play();
 
         canvas = document.getElementById('output-canvas');
         outputContext = canvas.getContext('2d');
@@ -114,7 +117,7 @@ export default function Processor() {
                 </header>
                 <div className="row">
                     <div className="column">
-                        <video className="video" crossOrigin="Anonymous" src='images/foreground.mp4' id='video' width='800' height='450' controls autoPlay muted loop type="video/mp4" />
+                        <video className="video" crossOrigin="Anonymous" src='videos/foreground.mp4' id='video' width='800' height='450' controls autoPlay muted loop type="video/mp4" />
                     </div>
                     <div className="column">
                         {link ? <a href={link}>LINK : {link}</a> : <h3>your link will show here...</h3>}
