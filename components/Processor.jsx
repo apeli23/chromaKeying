@@ -48,7 +48,7 @@ export default function Processor() {
             let g = frame.data[i * 4 + 1];
             let b = frame.data[i * 4 + 2];
 
-            if (r > 70 && r < 160 && g > 95 && g < 220 && b > 25 && b < 150) {
+            if (r >= 0 && r < 45 && g > 170 && g < 180 && b==0) {
                 frame.data[i * 4 + 0] = frame2.data[i * 4 + 0];
                 frame.data[i * 4 + 1] = frame2.data[i * 4 + 1];
                 frame.data[i * 4 + 2] = frame2.data[i * 4 + 2];
@@ -117,7 +117,7 @@ export default function Processor() {
                 </header>
                 <div className="row">
                     <div className="column">
-                        <video className="video" crossOrigin="Anonymous" src='videos/foreground.mp4' id='video' width='800' height='450' controls autoPlay muted loop type="video/mp4" />
+                        <video className="video" crossOrigin="Anonymous" src='videos/foreground.mp4' id='video' width='800' height='450'  autoPlay muted loop type="video/mp4" />
                     </div>
                     <div className="column">
                         {link ? <a href={link}>LINK : {link}</a> : <h3>your link will show here...</h3>}
